@@ -1,0 +1,10 @@
+input {
+  file {
+    type => ""
+    path => [ "/var/log/vs01/*.log", "/var/log/vs02/*.log" ]
+    exclude => [ "*.gz", "*.zip", "*.rar" ]
+    start_position => "end"
+    stat_interval => 1
+    discover_interval => 30
+  }
+}
