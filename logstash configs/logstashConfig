@@ -1,10 +1,25 @@
 input {
   file {
-    type => ""
-    path => [ "/var/log/vs01/*.log", "/var/log/vs02/*.log" ]
+    type => "test_log"
+    path => [ "/Users/andrejtarasov/Desktop/cinimex/teatLogs/*"]
     exclude => [ "*.gz", "*.zip", "*.rar" ]
-    start_position => "end"
+    start_position => "beginning"
     stat_interval => 1
     discover_interval => 30
+  }
+}
+filter {
+  grok {
+    match => { "message" => ["%{WORD:message_text}"] }
+   }
+  mutate {
+    add_field => [ "habra_field", "Hello Habr" ]
+    replace => { "message" => "%{message_text}: %{message}" }
+  }
+}
+#Debug
+output {
+  stdout {
+    codec => rubydebug
   }
 }
