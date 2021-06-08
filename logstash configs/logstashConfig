@@ -1,7 +1,15 @@
 input {
   file {
     type => "test_log"
+    #read from package
     path => [ "/Users/andrejtarasov/Desktop/cinimex/teatLogs/*"]
+    #split file by timestamp
+    codec => multiline {
+      patterns_dir => "./logstash-patterns/"
+      pattern => "^%{BASE_TIMESTAMP} "
+      negate => true
+      what => "previous"
+    }
     exclude => [ "*.gz", "*.zip", "*.rar" ]
     start_position => "beginning"
     stat_interval => 1
@@ -10,16 +18,36 @@ input {
 }
 filter {
   grok {
-    match => { "message" => ["%{WORD:message_text}"] }
+    patterns_dir => "./logstash-patterns/"
+    #get timestamp and log body
+    match => { "message" => ["%{BASE_TIMESTAMP:log_timestamp}\s%{BODY:body}"]}
    }
+  kv{
+    value_split => ":"
+    source => "body"
+    target => "args"
+  }
+  kv{
+    value_split => "="
+    source => "body"
+    field_split_pattern => "(\s+|:|[|])"
+    target => "params"
+  }
   mutate {
-    add_field => [ "habra_field", "Hello Habr" ]
-    replace => { "message" => "%{message_text}: %{message}" }
+    add_field => [ "id", "1" ]
+    remove_field => ["body"]
+    #remove_field => ["message"]
+    remove_field => ["host"]
+    remove_field => ["timestamp"]
   }
 }
-#Debug
 output {
-  stdout {
-    codec => rubydebug
-  }
+  elasticsearch {
+        index => "test_for_logreader"
+        hosts => "localhost:9200"
+        #data_stream => "true"
+    }
+  #stdout {
+  #  codec => rubydebug
+  #}
 }
