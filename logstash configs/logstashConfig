@@ -22,6 +22,9 @@ filter {
     #get timestamp and log body
     match => { "message" => ["%{BASE_TIMESTAMP:log_timestamp}\s%{BODY:body}"]}
    }
+   date {
+         match => [ "log_timestamp", "YYYY-MM-dd HH:mm:ss.SSSSSS" ]
+       }
   kv{
     value_split => ":"
     source => "body"
