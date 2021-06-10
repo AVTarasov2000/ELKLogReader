@@ -24,6 +24,7 @@ filter {
    }
    date {
          match => [ "log_timestamp", "YYYY-MM-dd HH:mm:ss.SSSSSS" ]
+         target => "log_timestamp_date"
        }
   kv{
     value_split => ":"
@@ -37,7 +38,7 @@ filter {
     target => "params"
   }
   mutate {
-    add_field => [ "id", "1" ]
+    #add_field => [ "id", "1" ]
     remove_field => ["body"]
     #remove_field => ["message"]
     remove_field => ["host"]
