@@ -1,5 +1,5 @@
 BASE_TIMESTAMP \d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}.\d{6}
-MSG_ID X'[a-f\d]{48}'
+MSG_ID [a-f\d]{48}
 BODY .+
 BIN \dx[\D\d]{9}
 VALUE \'%{WORD}\'
