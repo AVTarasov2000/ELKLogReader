@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from datetime import datetime
 es = Elasticsearch()
 
 
@@ -9,15 +10,13 @@ def get_by_msg_id(msg_id):
         print("%(message)s" % hit["_source"])
 
 
-# test_message = {
-#     "title": "Веселые котята",
-#     "content": "<p>Смешная история про котят<p>",
-#     "tags": ["котята", "смешная история"],
-#     "published_at": "2014-09-12T20:44:42+00:00"
-# }
+test_message = {
+    'timestamp': datetime.now(),
+    'message': "test1"
+}
 
-# res = es.index(index="test-index", id=1, body=test_message)
-# print(res['result'])
+res = es.index(index="test-index", id=1, body=test_message)
+print(res['result'])
 
 # res = es.get(index="test_for_logreader_2", id=1)
 # print(res['_source'])
@@ -29,7 +28,7 @@ def get_by_msg_id(msg_id):
 # for hit in res['hits']['hits']:
 #     print("%(message)s" % hit["_source"])
 
-get_by_msg_id("X'414d512042524b303120202020202020609239712e4c7225'")
+# get_by_msg_id("X'414d512042524b303120202020202020609239712e4c7225'")
 
 
 
