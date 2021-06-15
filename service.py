@@ -2,13 +2,14 @@ from elasticsearch import Elasticsearch
 es = Elasticsearch()
 es_info = Elasticsearch.info(es)
 
+index = "test_for_logreader"
 
 def search_by_msg_id(msg_id: str):
-    return es.search(index="test_for_logreader", body={"query": {"match": {"MsgId": msg_id}}})
+    return es.search(index=index, body={"query": {"match": {"MsgId": msg_id}}})
 
 
 def search_by_timestamp(start_date: str, end_date:str):
-    return es.search(index="test_for_logreader", body={"query": {"range": {"timestamp": {"gte": start_date, "lte": end_date}}}})
+    return es.search(index=index, body={"query": {"range": {"timestamp": {"gte": start_date, "lte": end_date}}}})
 
 
 def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
@@ -18,10 +19,13 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
         end_date = "*"
     if not start_date:
         start_date = "*"
-    return es.search(index="test_for_logreader", body={"query": {"query_string": {
+    return es.search(index=index, body={"query": {"query_string": {
     "query": f"@timestamp:[{start_date} TO {end_date}] AND MsgId:\"{msg_id}\""}}})
 
-# print(es.indices.get_mapping(index="test_for_logreader"))
+def get_all_fields_to_search():
+    return es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']
+
+print(es.indices.get_mapping(index="test_for_logreader"))
 
 # print(es.search(index="test-index", sort={"timestamp": "desc"}))
 
@@ -32,3 +36,9 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
 
 # print(len(es.search(index="test_for_logreader", body={"query": {"query_string": {
 #     "query":"@timestamp:[* TO *] AND  MsgId:\"X'414d512042524b303120202020202020609239712e4c4c04'\""}}})['hits']['hits']))
+
+for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']:
+    print(i)
+print()
+for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']['params']['properties']:
+    print(i)
