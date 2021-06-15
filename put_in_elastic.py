@@ -12,7 +12,7 @@ def get_by_msg_id(msg_id):
 
 test_message = {
     'timestamp': datetime.now(),
-    'message': "test1"
+    'message': "test2"
 }
 
 res = es.index(index="test-index", id=1, body=test_message)
