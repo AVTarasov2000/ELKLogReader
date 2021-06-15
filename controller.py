@@ -20,8 +20,8 @@ def test_get():
     result = search_by_timestamp_and_msg_id(data['dateFrom'], data['dateTo'], data['msgId'])
     res = []
     if result['hits']['hits']:
-        res = [{"message": i['_source']['message'], "timestamp": i['_source']['timestamp']} for i in result['hits']['hits']]
-    return {"result": res}
+        res = [{"message": i['_source']['message'], "timestamp": i['_source']['@timestamp']} for i in result['hits']['hits']]
+    return {"result": res, "count": len(result['hits']['hits'])}
 
 if __name__ == '__main__':
     app.run()
