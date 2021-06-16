@@ -27,6 +27,10 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
 def get_all_fields_to_search():
     return es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties'], index
 
+def search_by_args(args):
+    return {}
+
+
 # print(es.indices.get_mapping(index="test_for_logreader"))
 
 # print(es.search(index="test-index", sort={"timestamp": "desc"}))

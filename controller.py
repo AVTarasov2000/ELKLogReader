@@ -1,6 +1,6 @@
 from flask import Flask, request, make_response
 from flask_cors import CORS
-from service import search_by_timestamp_and_msg_id, get_all_fields_to_search
+from service import search_by_timestamp_and_msg_id, get_all_fields_to_search, search_by_args
 from Node import Node
 
 app = Flask(__name__)
@@ -25,6 +25,17 @@ def test_get():
     if result['hits']['hits']:
         res = [{"message": str(i['_source']['message']).split("\n"), "timestamp": i['_source']['@timestamp']} for i in result['hits']['hits']]
     return {"result": res, "count": len(result['hits']['hits'])}
+
+
+@app.route("/search/by/args", methods=['POST'])
+def search():
+    data = request.json
+    # result = search_by_args(data['searchArgs'])
+    print(data)
+    # res = []
+    # if result['hits']['hits']:
+    #     res = [{"message": str(i['_source']['message']).split("\n"), "timestamp": i['_source']['@timestamp']} for i in result['hits']['hits']]
+    return {}
 
 
 @app.route("/getTree", methods=['GET'])
