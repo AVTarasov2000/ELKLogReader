@@ -4,11 +4,12 @@ es_info = Elasticsearch.info(es)
 
 index = "test_for_logreader"
 
+
 def search_by_msg_id(msg_id: str):
     return es.search(index=index, body={"query": {"match": {"MsgId": msg_id}}})
 
 
-def search_by_timestamp(start_date: str, end_date:str):
+def search_by_timestamp(start_date: str, end_date: str):
     return es.search(index=index, body={"query": {"range": {"timestamp": {"gte": start_date, "lte": end_date}}}})
 
 
@@ -22,10 +23,11 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
     return es.search(index=index, body={"query": {"query_string": {
     "query": f"@timestamp:[{start_date} TO {end_date}] AND MsgId:\"{msg_id}\""}}})
 
-def get_all_fields_to_search():
-    return es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']
 
-print(es.indices.get_mapping(index="test_for_logreader"))
+def get_all_fields_to_search():
+    return es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties'], index
+
+# print(es.indices.get_mapping(index="test_for_logreader"))
 
 # print(es.search(index="test-index", sort={"timestamp": "desc"}))
 
@@ -35,10 +37,10 @@ print(es.indices.get_mapping(index="test_for_logreader"))
 
 
 # print(len(es.search(index="test_for_logreader", body={"query": {"query_string": {
-#     "query":"@timestamp:[* TO *] AND  MsgId:\"X'414d512042524b303120202020202020609239712e4c4c04'\""}}})['hits']['hits']))
+#     "query":"@timestamp:[* TO *] AND   params.APPLICANTTYPE:'должник'"}}})['hits']['hits']))
 
-for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']:
-    print(i)
-print()
-for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']['params']['properties']:
-    print(i)
+# for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']:
+#     print(i)
+# print()
+# for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']['params']['properties']:
+#     print(i)

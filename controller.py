@@ -11,9 +11,11 @@ def make_resp(message, status):
     resp.headers['Content-type'] = 'application/json; charset=utf-8'
     return resp
 
+
 @app.route("/")
 def index():
     return "test"
+
 
 @app.route("/search", methods=['POST'])
 def test_get():
@@ -24,13 +26,31 @@ def test_get():
         res = [{"message": str(i['_source']['message']).split("\n"), "timestamp": i['_source']['@timestamp']} for i in result['hits']['hits']]
     return {"result": res, "count": len(result['hits']['hits'])}
 
-@app.route("/getTree", methods=['POST'])
+
+@app.route("/getTree", methods=['GET'])
 def get_tree():
-    result = get_all_fields_to_search()
-    node = Node("nodes", result)
-    for n in node.content:
-        if node.content[n].contains("properties"):
-            pass
+    result, name = get_all_fields_to_search()
+    root = Node(name, result, "", "")
+    stack = []
+    for i in result:
+        if "properties" in result[i]:
+            tmp = Node(i, result[i]["properties"], str(i), "")
+            stack.append(tmp)
+            root.items.append(tmp)
+        else:
+            root.items.append(Node(i, [], str(i), result[i]['type']))
+
+    while stack:
+        node = stack.pop()
+        for n in node.content:
+            if "properties" in node.content[n]:
+                tmp = Node(n, node.content[n]["properties"], node.path+"."+n, node.content[n]['type'])
+                stack.append(tmp)
+                node.items.append(tmp)
+            else:
+                node.items.append(Node(n, [], node.path+"."+n, node.content[n]['type']))
+    return root.get_json()
+
 
 
 
