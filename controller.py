@@ -30,12 +30,12 @@ def test_get():
 @app.route("/search/by/args", methods=['POST'])
 def search():
     data = request.json
-    # result = search_by_args(data['searchArgs'])
-    print(data)
-    # res = []
-    # if result['hits']['hits']:
-    #     res = [{"message": str(i['_source']['message']).split("\n"), "timestamp": i['_source']['@timestamp']} for i in result['hits']['hits']]
-    return {}
+    result = search_by_args(data['queries'])
+    res = []
+    if result['hits']['hits']:
+        res = [{"message": str(i['_source']['message']).split("\n"), "timestamp": i['_source']['@timestamp']} for i in
+               result['hits']['hits']]
+    return {"result": res, "count": len(result['hits']['hits'])}
 
 
 @app.route("/getTree", methods=['GET'])

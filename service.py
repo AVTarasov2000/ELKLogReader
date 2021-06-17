@@ -27,8 +27,16 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
 def get_all_fields_to_search():
     return es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties'], index
 
-def search_by_args(args):
-    return {}
+
+def search_by_args(queries):
+    if len(queries) <= 0:
+        return {}
+    else:
+        query = queries[0]
+        for q in queries[1:]:
+            query += f"AND {q}"
+        return es.search(index=index, body={"query": {"query_string": {
+                "query": query}}})
 
 
 # print(es.indices.get_mapping(index="test_for_logreader"))
