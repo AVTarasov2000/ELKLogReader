@@ -33,8 +33,10 @@ def search():
     result = search_by_args(data['queries'])
     res = []
     if result['hits']['hits']:
-        res = [{"message": str(i['_source']['message']).split("\n"), "timestamp": i['_source']['@timestamp']} for i in
-               result['hits']['hits']]
+        res = [{"message": str(i['_source']['message']).split("\n"),
+                "timestamp": i['_source']['@timestamp'],
+                'path': i['_source']['path']}
+               for i in result['hits']['hits']]
     return {"result": res, "count": len(result['hits']['hits'])}
 
 

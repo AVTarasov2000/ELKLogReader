@@ -20,7 +20,7 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
         end_date = "*"
     if not start_date:
         start_date = "*"
-    return es.search(index=index, body={"query": {"query_string": {
+    return es.search(index=index, body={"size":1000 ,"query": {"query_string": {
     "query": f"@timestamp:[{start_date} TO {end_date}] AND MsgId:\"{msg_id}\""}}})
 
 
@@ -30,12 +30,12 @@ def get_all_fields_to_search():
 
 def search_by_args(queries):
     if len(queries) <= 0:
-        return {}
+        return es.search(index=index, body={"size":1000 ,"query": {"match_all" :{}}})
     else:
         query = queries[0]
         for q in queries[1:]:
             query += f"AND {q}"
-        return es.search(index=index, body={"query": {"query_string": {
+        return es.search(index=index, body={"size":1000 ,"query": {"query_string": {
                 "query": query}}})
 
 
@@ -50,6 +50,8 @@ def search_by_args(queries):
 
 # print(len(es.search(index="test_for_logreader", body={"query": {"query_string": {
 #     "query":"@timestamp:[* TO *] AND   params.APPLICANTTYPE:'должник'"}}})['hits']['hits']))
+
+print(es.search(index=index, body={"query": {"match_all": {}}})['hits']['hits'])
 
 # for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']:
 #     print(i)
