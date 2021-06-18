@@ -1,8 +1,10 @@
+import datetime
+
 from elasticsearch import Elasticsearch
 es = Elasticsearch()
 es_info = Elasticsearch.info(es)
 
-index = "test_for_logreader"
+index = "test_for_logreader_2"
 
 
 def search_by_msg_id(msg_id: str):
@@ -25,7 +27,7 @@ def search_by_timestamp_and_msg_id(start_date: str, end_date:str, msg_id:str):
 
 
 def get_all_fields_to_search():
-    return es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties'], index
+    return es.indices.get_mapping(index=index)[index]['mappings']['properties'], index
 
 
 def search_by_args(queries):
@@ -39,6 +41,29 @@ def search_by_args(queries):
                 "query": query}}})
 
 
+def difference_by_id():
+    with open("res", "w") as f:
+        for id in es.search(index=index, body={"size": 10000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits']:
+            message = ""
+            var = es.search(index=index,
+                            body={"query": {"match": {
+                                "params.HTTPRequestId": f"{id['fields']['params.HTTPRequestId']}"
+                            }}
+                            ,"fields": ['log_timestamp'], "_source": False})['hits']['hits']
+
+            if len(var) > 2:
+                message += str(id['fields']['params.HTTPRequestId'][0])+"\n"
+                message+= f"{var[0]['fields']['log_timestamp'][0]} - {var[1]['fields']['log_timestamp'][0]} = "
+                message += str((datetime.datetime.strptime(var[0]['fields']['log_timestamp'][0], "%Y-%m-%d %H:%M:%S.%f")
+                               - datetime.datetime.strptime(var[1]['fields']['log_timestamp'][0], "%Y-%m-%d %H:%M:%S.%f")).microseconds)
+                message+="\n\n"
+            f.write(message)
+
+# difference_by_id()
+
+# print(es.search(index=index, body={"size": 10000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits'])
+
+# print(es.search(index=index, body={"size": 1000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits'])
 # print(es.indices.get_mapping(index="test_for_logreader"))
 
 # print(es.search(index="test-index", sort={"timestamp": "desc"}))
@@ -48,10 +73,10 @@ def search_by_args(queries):
 # print(es.search(index="test-index", body={"query": {"range": {"timestamp": {"gte": "2014-09-01", "lte": "2022-09-01"}}, "match": {"message": "test1"}}}))
 
 
-# print(len(es.search(index="test_for_logreader", body={"query": {"query_string": {
-#     "query":"@timestamp:[* TO *] AND   params.APPLICANTTYPE:'должник'"}}})['hits']['hits']))
-
-print(es.search(index=index, body={"query": {"match_all": {}}})['hits']['hits'])
+# print(es.search(index=index, body={"query": {"query_string": {
+#     "query":"params.RequestId: \"X'5040000000000002dbc4b01ec47a11ebb6baac100e1f0000'\""}}})['hits']['hits'])
+#
+# print(es.search(index=index, body={"query": {"match_all": {}}})['hits']['hits'])
 
 # for i in es.indices.get_mapping(index=index)['test_for_logreader']['mappings']['properties']:
 #     print(i)
