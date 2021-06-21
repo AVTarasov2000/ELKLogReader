@@ -1,7 +1,8 @@
-from flask import Flask, request, make_response
+from waitress import serve
+from flask import Flask, request, make_response, render_template
 from flask_cors import CORS
-from service import search_by_timestamp_and_msg_id, get_all_fields_to_search, search_by_args
-from Node import Node
+from app.service import search_by_timestamp_and_msg_id, get_all_fields_to_search, search_by_args
+from app.Node import Node
 
 app = Flask(__name__)
 CORS(app)
@@ -14,7 +15,7 @@ def make_resp(message, status):
 
 @app.route("/")
 def index():
-    return "test"
+    return render_template("index.html")
 
 
 @app.route("/search", methods=['POST'])
@@ -68,4 +69,4 @@ def get_tree():
 
 
 if __name__ == '__main__':
-    app.run()
+    serve(app, host='0.0.0.0', port='5000')

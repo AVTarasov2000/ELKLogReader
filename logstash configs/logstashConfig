@@ -1,67 +1,67 @@
-input {
-  file {
-    type => "test_log"
-    #read from package
-    path => [ "/Users/andrejtarasov/Desktop/cinimex/teatLogs/*"]
-    #split file by timestamp
-    codec => multiline {
-      patterns_dir => "./logstash-patterns/"
-      pattern => "^%{BASE_TIMESTAMP} "
-      negate => true
-      what => "previous"
-    }
-    exclude => [ "*.gz", "*.zip", "*.rar" ]
-    start_position => "beginning"
-    stat_interval => 1
-    discover_interval => 10
-  }
-}
-filter {
-  grok {
-    patterns_dir => "./logstash-patterns/"
-    #get timestamp and log body
-    match => { "message" => ["%{BASE_TIMESTAMP:log_timestamp}\s%{BODY:body}"]}
-   }
-   date {
-         match => [ "log_timestamp", "YYYY-MM-dd HH:mm:ss.SSSSSS" ]
-         target => "log_timestamp_date"
-       }
-  kv{
-    value_split => ":"
-    source => "body"
-  }
-  #if [MsgId]{
-  #  grok{
-  #    match => { "MsgId" => ["X'%{MSG_ID:int_id}'"]}
-  #  }
-  #  mutate{
-  #
-  #  }
-  #}
-  kv{
-    value_split => "="
-    source => "body"
-    field_split_pattern => "(\s+|:|[|])"
-    target => "params"
-  }
-  mutate {
-    #add_field => [ "id", "1" ]
-    #remove_field => ["body"]
-    #remove_field => ["message"]
-    remove_field => ["host"]
-    remove_field => ["timestamp"]
-  }
-}
-output {
-  elasticsearch {
-        index => "test_for_logreader_2"
-        hosts => "localhost:9200"
-        #data_stream => "true"
-    }
-  stdout {
-    codec => rubydebug
-  }
-}
+#input {
+#  file {
+#    type => "test_log"
+#    #read from package
+#    path => [ "/Users/andrejtarasov/Desktop/cinimex/teatLogs/*"]
+#    #split file by timestamp
+#    codec => multiline {
+#      patterns_dir => "./logstash-patterns/"
+#      pattern => "^%{BASE_TIMESTAMP} "
+#      negate => true
+#      what => "previous"
+#    }
+#    exclude => [ "*.gz", "*.zip", "*.rar" ]
+#    start_position => "beginning"
+#    stat_interval => 1
+#    discover_interval => 10
+#  }
+#}
+#filter {
+#  grok {
+#    patterns_dir => "./logstash-patterns/"
+#    #get timestamp and log body
+#    match => { "message" => ["%{BASE_TIMESTAMP:log_timestamp}\s%{BODY:body}"]}
+#   }
+#   date {
+#         match => [ "log_timestamp", "YYYY-MM-dd HH:mm:ss.SSSSSS" ]
+#         target => "log_timestamp_date"
+#       }
+#  kv{
+#    value_split => ":"
+#    source => "body"
+#  }
+#  #if [MsgId]{
+#  #  grok{
+#  #    match => { "MsgId" => ["X'%{MSG_ID:int_id}'"]}
+#  #  }
+#  #  mutate{
+#  #
+#  #  }
+#  #}
+#  kv{
+#    value_split => "="
+#    source => "body"
+#    field_split_pattern => "(\s+|:|[|])"
+#    target => "params"
+#  }
+#  mutate {
+#    #add_field => [ "id", "1" ]
+#    #remove_field => ["body"]
+#    #remove_field => ["message"]
+#    remove_field => ["host"]
+#    remove_field => ["timestamp"]
+#  }
+#}
+#output {
+#  elasticsearch {
+#        index => "test_for_logreader_2"
+#        hosts => "localhost:9200"
+#        #data_stream => "true"
+#    }
+#  stdout {
+#    codec => rubydebug
+#  }
+#}
 
 
 input {
@@ -96,14 +96,6 @@ filter {
     value_split => ":"
     source => "body"
   }
-  #if [MsgId]{
-  #  grok{
-  #    match => { "MsgId" => ["X'%{MSG_ID:int_id}'"]}
-  #  }
-  #  mutate{
-  #
-  #  }
-  #}
   kv{
     value_split => "="
     source => "body"

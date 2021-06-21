@@ -60,6 +60,7 @@ def difference_by_id():
             f.write(message)
 
 # difference_by_id()
+# print(es.search(index=index, body={"query": {"match": {"params.RequestId": "X'50400000000000022fc75e9ebe5611eb850bac100e1f0000'"}}}))
 
 # print(es.search(index=index, body={"size": 10000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits'])
 
