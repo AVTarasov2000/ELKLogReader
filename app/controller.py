@@ -1,4 +1,4 @@
-from waitress import serve
+# from waitress import serve
 from flask import Flask, request, make_response, render_template
 from flask_cors import CORS
 from app.service import search_by_timestamp_and_msg_id, get_all_fields_to_search, search_by_args
@@ -66,7 +66,7 @@ def get_tree():
     return root.get_json()
 
 
-
-
-if __name__ == '__main__':
-    serve(app, host='0.0.0.0', port='5000')
+#
+#
+# if __name__ == '__main__':
+#     serve(app, host='0.0.0.0', port='5000')

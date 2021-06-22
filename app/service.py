@@ -1,7 +1,7 @@
 import datetime
-
+import os
 from elasticsearch import Elasticsearch
-es = Elasticsearch()
+es = Elasticsearch(os.environ.get('ELASTICSEARCH_URL'))
 es_info = Elasticsearch.info(es)
 
 index = "test_for_logreader_2"
@@ -59,10 +59,14 @@ def difference_by_id():
                 message+="\n\n"
             f.write(message)
 
+
+def delete_index():
+    es.indices.delete(index=index, ignore=[400, 404])
+
 # difference_by_id()
 # print(es.search(index=index, body={"query": {"match": {"params.RequestId": "X'50400000000000022fc75e9ebe5611eb850bac100e1f0000'"}}}))
 
-# print(es.search(index=index, body={"size": 10000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits'])
+# print(es.search(index=index, body={"size": 10000,  "fields": ["@timestamp"], "_source": False})['hits']['hits'])
 
 # print(es.search(index=index, body={"size": 1000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits'])
 # print(es.indices.get_mapping(index="test_for_logreader"))
