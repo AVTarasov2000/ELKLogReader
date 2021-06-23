@@ -1,0 +1,39 @@
+version: "3.9"
+
+volumes:
+  elasticsearch:
+    driver: local
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: elasticsearch
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:7.13.2
+    environment:
+      XPACK_MONITORING_ENABLED: "false"
+    ports:
+      - 5046:5046
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/config/pipelines:ro
+      - ./logs:/usr/share/logstash/input
+  web:
+    image: logreader:latest
+    container_name: logreader
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "8000:5000"
+    links:
+      - "elasticsearch:elasticsearch"

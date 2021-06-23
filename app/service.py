@@ -1,10 +1,12 @@
 import datetime
 import os
 from elasticsearch import Elasticsearch
-es = Elasticsearch(os.environ.get('ELASTICSEARCH_URL'))
+# es = Elasticsearch(os.environ.get('ELASTICSEARCH_URL'))
+es = Elasticsearch("http://elasticsearch:9200")
+
 es_info = Elasticsearch.info(es)
 
-index = "test_for_logreader_2"
+index = "test_for_logreader"
 
 
 def search_by_msg_id(msg_id: str):

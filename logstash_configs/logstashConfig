@@ -71,7 +71,7 @@ input {
     path => [ "C:/Users/avtarasov/Desktop/logreader/package_for_logs/*"]
     #split file by timestamp
     codec => multiline {
-      patterns_dir => "C:\Users\avtarasov\Desktop\logreader\logstash-7.13.1\bin\logstash-patterns"
+      patterns_dir => ".\logstash-patterns"
       pattern => "^%{BASE_TIMESTAMP}"
       negate => true
       what => "previous"
@@ -84,7 +84,7 @@ input {
 }
 filter {
   grok {
-    patterns_dir => "C:\Users\avtarasov\Desktop\logreader\logstash-7.13.1\bin\logstash-patterns"
+    patterns_dir => ".\logstash-patterns"
     #get timestamp and log body
     match => { "message" => ["%{BASE_TIMESTAMP:log_timestamp}\s%{BODY:body}"]}
    }
