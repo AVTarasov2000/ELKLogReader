@@ -43,23 +43,29 @@ def search_by_args(queries):
                 "query": query}}})
 
 
-def difference_by_id():
-    with open("res", "w") as f:
-        for id in es.search(index=index, body={"size": 10000,  "fields": ["params.HTTPRequestId"], "_source": False})['hits']['hits']:
-            message = ""
-            var = es.search(index=index,
-                            body={"query": {"match": {
-                                "params.HTTPRequestId": f"{id['fields']['params.HTTPRequestId']}"
-                            }}
-                            ,"fields": ['log_timestamp'], "_source": False})['hits']['hits']
-
-            if len(var) > 2:
-                message += str(id['fields']['params.HTTPRequestId'][0])+"\n"
-                message+= f"{var[0]['fields']['log_timestamp'][0]} - {var[1]['fields']['log_timestamp'][0]} = "
-                message += str((datetime.datetime.strptime(var[0]['fields']['log_timestamp'][0], "%Y-%m-%d %H:%M:%S.%f")
-                               - datetime.datetime.strptime(var[1]['fields']['log_timestamp'][0], "%Y-%m-%d %H:%M:%S.%f")).microseconds)
-                message+="\n\n"
-            f.write(message)
+def difference_by_id(file1, file2, field_path):
+    res = []
+    for id in es.search(index=index, body={"size": 10000,  "fields": [field_path], "_source": False})['hits']['hits']:
+        message = ""
+        var1 = es.search(index=index,
+                        body={"query": {"match": {
+                            field_path: f"{id['fields'][field_path]}",
+                            "path": file1
+                        }}
+                        ,"fields": ['log_timestamp'], "_source": False})['hits']['hits']
+        var2 = es.search(index=index,
+                         body={"query": {"match": {
+                             field_path: f"{id['fields'][field_path]}",
+                             "path": file2
+                         }}
+                             , "fields": ['log_timestamp'], "_source": False})['hits']['hits']
+        if var1 and var2:
+            message += str(id['fields'][field_path][0])+"\n"
+            message += f"{var1['fields']['log_timestamp'][0]} - {var2['fields']['log_timestamp'][0]} = "
+            message += str((datetime.datetime.strptime(var1['fields']['log_timestamp'][0], "%Y-%m-%d %H:%M:%S.%f")
+                           - datetime.datetime.strptime(var2['fields']['log_timestamp'][0], "%Y-%m-%d %H:%M:%S.%f")).microseconds)
+            message += "\n\n"
+        res.append({"message":message, "path": str(id['fields'][field_path][0])})
 
 
 def delete_index():
