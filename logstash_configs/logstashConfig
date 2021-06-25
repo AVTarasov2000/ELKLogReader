@@ -114,7 +114,4 @@ output {
         hosts => "localhost:9200"
         #data_stream => true
     }
-  stdout {
-    codec => rubydebug
-  }
 }
