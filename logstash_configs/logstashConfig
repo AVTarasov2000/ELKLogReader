@@ -110,7 +110,7 @@ filter {
 }
 output {
   elasticsearch {
-        index => "test_for_logreader"
+        index => "logreader"
         hosts => "localhost:9200"
         #data_stream => true
     }
