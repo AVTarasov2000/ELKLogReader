@@ -4,3 +4,4 @@
 * cd ELKLogReader
 * docker build -t logreader:latest ./
 * docker compose up
+* логи добавлять в папку logs
