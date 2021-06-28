@@ -75,6 +75,8 @@ def difference_by_id(file1, file2, field_path):
 
 
 def delete_index():
+    print("deleting")
+    es.delete_by_query(index=index, body={"query": {"match_all": {}}})
     es.indices.delete(index=index, ignore=[400, 404])
     es.indices.create(index=index, ignore=400)
 
